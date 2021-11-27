@@ -1707,42 +1707,64 @@ break
 	}
 	break
 	
-                  case 'sticker':
-       case 'stiker':
-       case 's':
-       case 'stickergif':
-       case 'stikergif':
-       case 'sgif':
-              if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
-              encmediat = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-              mediat = await flaviojs.downloadAndSaveMediaMessage(encmediat)
-              ron = getRandom('.webp')
-              exec(`ffmpeg -i ${mediat} -vf "scale=512:512:force_original_aspect_ratio=increase,fps=15, crop=512:512" ${ron}`, (err) => {
-              fs.unlinkSync(mediat)
-              if (err) return reply(`${err}`)
-              exec(`webpmux -set exif ./sticker/data.exif ${ron} -o ${ron}`, async (error) => {
-              if (error) return reply(`${error}`)
-              flaviojs.sendMessage(from, fs.readFileSync(ron), sticker, {quoted:mek})
-              fs.unlinkSync(ron)
-})
-})
-              } else if ((isMedia && mek.message.videoMessage.seconds < 11 || isQuotedVideo && mek.message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.seconds < 11) && args.length == 0) {
-              encmedia = isQuotedVideo ? JSON.parse(JSON.stringify(mek).replace('quotedM','m')).message.extendedTextMessage.contextInfo : mek
-              mediat = await flaviojs.downloadAndSaveMediaMessage(encmedia)
-              ron = getRandom('.webp')
-              exec(`ffmpeg -i ${mediat} -vf "scale=512:512:force_original_aspect_ratio=increase,fps=15, crop=512:512" ${ron}`, (err) => {
-              fs.unlinkSync(mediat)
-              if (err) return reply(`${err}`)
-              exec(`webpmux -set exif ./sticker/data.exif ${ron} -o ${ron}`, async (error) => {
-              if (error) return reply(`${error}`)
-              flaviojs.sendMessage(from, fs.readFileSync(ron), sticker, {quoted:mek})
-              fs.unlinkSync(ron)
-})
-})
-              } else {
-              reply(`Envie uma imagem com o adesivo de legenda $ {prefix}\nDuração do vídeo do adesivo de 1 a 9 segundos`)
-}
-              break
+                  break
+       case 'gifstiker':
+				case 's':
+			case 'stickergif':  
+				case 'sticker':
+				  case 'stiker':
+					     if ((isMedia && !mek.message.videoMessage || isQuotedImage) && args.length == 0) {
+            const encmedia = isQuotedImage ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+            const media = await flaviojs.downloadAndSaveMediaMessage(encmedia)
+                ran = '666.webp'
+                await ffmpeg(`./${media}`)
+                .input(media)
+                .on('start', function (cmd) {
+                     console.log(`Started : ${cmd}`)
+                })
+                .on('error', function (err) {
+                 console.log(`Error : ${err}`)
+                fs.unlinkSync(media)
+                reply('error')
+                })
+                .on('end', function () {
+                console.log('Finish')
+                flaviojs.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+                 fs.unlinkSync(media)
+                fs.unlinkSync(ran)
+                })
+                .addOutputOptions([`-vcodec`, `libwebp`, `-vf`, `scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+                .toFormat('webp')
+                .save(ran)
+                } else if ((isMedia && mek.message.videoMessage.seconds < 11 || isQuotedVideo && mek.message.extendedTextMessage.contextInfo.quotedMessage.videoMessage.seconds < 11) && args.length == 0) {
+                const encmedia = isQuotedVideo ? JSON.parse(JSON.stringify(mek).replace('quotedM', 'm')).message.extendedTextMessage.contextInfo : mek
+                const media = await flaviojs.downloadAndSaveMediaMessage(encmedia)
+            ran = '999.webp'
+             reply(`EM PROCESSO AGUARDE`)
+            await ffmpeg(`./${media}`)
+            .inputFormat(media.split('.')[1])
+            .on('start', function (cmd) {
+            console.log(`Started : ${cmd}`)
+            })
+            .on('error', function (err) {
+            console.log(`Error : ${err}`)
+            fs.unlinkSync(media)
+            tipe = media.endsWith('.mp4') ? 'video' : 'gif'
+            reply(`Falha, no momento da conversão ${tipe} ke stiker`)
+            })
+            .on('end', function () {
+            console.log('Finish')
+            flaviojs.sendMessage(from, fs.readFileSync(ran), sticker, {quoted: mek})
+            fs.unlinkSync(media)
+            fs.unlinkSync(ran)
+                })
+                .addOutputOptions([`-vcodec`, `libwebp`, `-vf`, `scale='min(320,iw)':min'(320,ih)':force_original_aspect_ratio=decrease,fps=15, pad=320:320:-1:-1:color=white@0.0, split [a][b]; [a] palettegen=reserve_transparent=on:transparency_color=ffffff [p]; [b][p] paletteuse`])
+                .toFormat('webp')
+                .save(ran)
+            } else {
+                reply(`Envie uma foto com uma legenda ${prefix}sticker\nDuração do adesivo do vídeo de 1 a 9 segundos`)
+            }
+            break
                     
        case 'renomear':
               if (!isQuotedSticker) return reply('Só um adesivo')
