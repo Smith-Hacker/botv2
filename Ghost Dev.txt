@@ -1,0 +1,10 @@
+pkg update && pkg upgrade
+pkg install git -y
+pkg install nodejs -y
+pkg install ffmpeg -y
+pkg install imagemagick -y
+termux-setup-storage
+cd storage/emulated/0/Download/flaviobot-main
+cd flaviobot-main
+npm install
+npm start
