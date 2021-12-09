@@ -706,16 +706,6 @@ reply(`Desligado com sucesso a função anti-chamada`)
 reply(`on/off`)
 }
 break       
- case 'golpe':
-              membr = []
-              const mes = groupMembers
-              const msk = groupMembers
-              const siaps = mes[Math.floor(Math.random() * mes.length)]
-              const sips = pushname[Math.floor(Math.random() * msk.length)]
-              teks = `*O Golpe tá aí cai quem quer hihi:* @${siaps.jid.split('@')[0]}`
-              membr.push(siaps.jid)
-              mentions(teks, membr, true)
-              break       
         case 'owner':
         case 'creator':
                sendKontak(from, `${owner}`, `${ownerName}`, 'Ocupado!!')
